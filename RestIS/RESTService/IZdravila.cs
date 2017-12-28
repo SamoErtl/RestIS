@@ -11,6 +11,8 @@ namespace RESTService
     [ServiceContract]
     public interface IZdravila
     {
+
+        // izpis zdravil
         [OperationContract]
         [WebGet(UriTemplate = "Zdravila", ResponseFormat = WebMessageFormat.Json)]
         List<Zdravilo> VrniSeznamZdravil();
@@ -19,17 +21,43 @@ namespace RESTService
         [WebGet(UriTemplate = "Zdravila/{id}", ResponseFormat = WebMessageFormat.Json)]
         Zdravilo VrniZdravila(string id);
 
+        // Zdravilo
+
         [OperationContract]
         [WebInvoke(UriTemplate = "Zdravilo", ResponseFormat = WebMessageFormat.Json)]
         void DodajZdravilo(Zdravilo oseba);
 
         [OperationContract]
-        [WebInvoke(UriTemplate = "Zdravilo/{id}", ResponseFormat = WebMessageFormat.Json, Method = "DELETE")]
-        void IzbrisiZdravilo(string Name, string NameLat);
+        [WebInvoke(UriTemplate = "Zdravilo/{Name}", ResponseFormat = WebMessageFormat.Json, Method = "DELETE")]
+        void IzbrisiZdravilo(string Name);
 
         [OperationContract]
         [WebInvoke(UriTemplate = "Zdravilo/{id}", ResponseFormat = WebMessageFormat.Json, Method ="PUT")]
         void PosodobiZdravilo(Zdravilo zdravilo, string id);
+
+        // Manufactured
+        [OperationContract]
+        [WebInvoke(UriTemplate = "Manufacturer", ResponseFormat = WebMessageFormat.Json)]
+        void DodajManu(Manufacturer manu);
+
+        [OperationContract]
+        [WebInvoke(UriTemplate = "Manufacturer/{Name}", ResponseFormat = WebMessageFormat.Json, Method = "DELETE")]
+        void IzbrisiManu(string Name);
+
+        [OperationContract]
+        [WebInvoke(UriTemplate = "Manufacturer/{id}", ResponseFormat = WebMessageFormat.Json, Method = "PUT")]
+        void PosodobiManu(Manufacturer manu, string id);
+
+
+        // User
+        [OperationContract]
+        [WebInvoke(UriTemplate = "NewUserdb", ResponseFormat = WebMessageFormat.Json)]
+        void DodajUser(dbUser manu);
+
+        [OperationContract]
+        [WebInvoke(UriTemplate = "DelUserdb/{Name}", ResponseFormat = WebMessageFormat.Json, Method = "DELETE")]
+        void IzbrisiUser(string Name);
+
     }
 
     [DataContract]
@@ -97,7 +125,9 @@ namespace RESTService
         [DataMember]
         public string Username { get; set; }
         [DataMember]
-        public string pass { get;  }
+        public string Pass { get;  }
+        [DataMember]
+        public string Mail { get; set; }
         [DataMember]
         public int MOD { get; set; }
         [DataMember]

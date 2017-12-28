@@ -19,18 +19,18 @@ namespace RESTService
        
         string cs = ConfigurationManager.ConnectionStrings["DBZdravilnicaConnectionString"].ConnectionString;
 
-        private bool AuthenticateUser(int mod)
+        private int AuthenticateUser(int mod)
         {
             WebOperationContext ctx = WebOperationContext.Current;
             string authHeader = ctx.IncomingRequest.Headers[HttpRequestHeader.Authorization];
             if (authHeader == null)
-                return false;
+                return -2;
 
             string[] loginData = authHeader.Split(':');
             dbUser usr = Login(loginData[0], loginData[1]);
             if (loginData.Length == 2 && mod == usr.MOD) 
-                return true;
-            return false;
+                return usr.MOD;
+            return -1;
         }
 
         public dbUser Login(string username, string password)
@@ -130,11 +130,13 @@ namespace RESTService
             }
         }
 
+
+        // zdravila 
         public void DodajZdravilo(Zdravilo zdr)
         {
 
-            if (!AuthenticateUser(0))
-                throw new FaultException("Napačno uporabniško ime ali geslo.");
+            if (AuthenticateUser(0)==0)
+                throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
             {
@@ -155,19 +157,18 @@ namespace RESTService
 
         }
 
-        public void IzbrisiZdravilo(string Name, string NameLat)
+        public void IzbrisiZdravilo(string Name)
         {
 
-            if (!AuthenticateUser(0))
-                throw new FaultException("Napačno uporabniško ime ali geslo.");
+            if (AuthenticateUser(0)==0)
+                throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
-                string sql = "DELETE FROM Medicine WHERE MedicineName = @param AND MedicineNameLat = @paramLat";
+                string sql = "DELETE FROM Medicine WHERE MedicineName = @param";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("param", Name));
-                cmd.Parameters.Add(new SqlParameter("paramLat", NameLat));
                 cmd.ExecuteNonQuery();
                 con.Close();
             }
@@ -175,15 +176,14 @@ namespace RESTService
 
         public void PosodobiZdravilo(Zdravilo zdravilo, string id)
         {
-            if (!AuthenticateUser(0))
-                throw new FaultException("Napačno uporabniško ime ali geslo.");
+            if (AuthenticateUser(0)==0)
+                throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
-                //popravi
                 string sql =
-                    "UPDATE Persons set FirstName=@1, LastName=@2, Address=@3, City=@4 WHERE PersonID=@0";
+                    "UPDATE Medicine set MedicineName=@0 MedicineNameLat@1, MedicineDescription@2, MedicineInstruction=@3 ID_Manufacturer =@4 WHERE MedicineName=@0";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("0", zdravilo.Name));
                 cmd.Parameters.Add(new SqlParameter("1", zdravilo.NameLat));
@@ -196,11 +196,115 @@ namespace RESTService
             }
         }
 
-        
 
-        // dodaj izbris posodobitev manufac/address mod 1
+
+        // dodaj izbris posodobitev manufac mod 1
+
+        public void DodajManu(Manufacturer zdr)
+        {
+
+            if (AuthenticateUser(1) == 1)
+                throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                con.Open();
+                string sql =
+                    "INSERT INTO Manufacturer (ManufacturerName, ManufacturerTel, ID_address)" +
+                    "VALUES (@Name, @Tel, @Addr)";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.Add(new SqlParameter("Name", zdr.Name));
+                cmd.Parameters.Add(new SqlParameter("Tel", zdr.NameTel));
+                cmd.Parameters.Add(new SqlParameter("Addr", zdr.Id_addr));
+                cmd.ExecuteNonQuery();
+                con.Close();
+
+            }
+
+        }
+
+        public void IzbrisiManu(string Name)
+        {
+
+            if (AuthenticateUser(1) == 1)
+                throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                con.Open();
+                string sql = "DELETE FROM Manufacturer WHERE ManufacturerName = @param";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.Add(new SqlParameter("param", Name));
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+        }
+
+        public void PosodobiManu(Manufacturer zdravilo, string id)
+        {
+            if (AuthenticateUser(1) == 1)
+                throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                con.Open();
+                //popravi
+                string sql =
+                    "UPDATE Manufacturer set ManufacturerName=@0 ManufacturerTel@1, ID_Address@2 WHERE ManufacturerName=@0";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.Add(new SqlParameter("0", zdravilo.Name));
+                cmd.Parameters.Add(new SqlParameter("1", zdravilo.NameTel));
+                cmd.Parameters.Add(new SqlParameter("2", zdravilo.Id_addr));
+
+                cmd.ExecuteNonQuery();
+                con.Close();
+
+            }
+        }
+        // dodaj izbris posodobitev address mod 1
 
         // add remove user  mod 2
+
+        public void DodajUser(dbUser zdr)
+        {
+
+            if (AuthenticateUser(2) == 2)
+                throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                con.Open();
+                string sql =
+                    "INSERT INTO DBUser (Username, Password, Email, Mod)" +
+                    "VALUES (@Name, @Pass, @Mail, @Mod)";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.Add(new SqlParameter("Name", zdr.Username));
+                cmd.Parameters.Add(new SqlParameter("Pass", zdr.Pass));
+                cmd.Parameters.Add(new SqlParameter("Mail", zdr.Mail));
+                cmd.Parameters.Add(new SqlParameter("Mod", zdr.MOD));
+                cmd.ExecuteNonQuery();
+                con.Close();
+
+            }
+
+        }
+
+        public void IzbrisiUser(string Name)
+        {
+
+            if (AuthenticateUser(2) == 2)
+                throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                con.Open();
+                string sql = "DELETE FROM DBUser WHERE Username = @param";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.Add(new SqlParameter("param", Name));
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+        }
 
     }
 }
