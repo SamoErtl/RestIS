@@ -19,7 +19,7 @@ namespace RESTService
        
         string cs = ConfigurationManager.ConnectionStrings["DBZdravilnicaConnectionString"].ConnectionString;
 
-        private bool AuthenticateUser()
+        private bool AuthenticateUser(int mod)
         {
             WebOperationContext ctx = WebOperationContext.Current;
             string authHeader = ctx.IncomingRequest.Headers[HttpRequestHeader.Authorization];
@@ -27,43 +27,47 @@ namespace RESTService
                 return false;
 
             string[] loginData = authHeader.Split(':');
-            if (loginData.Length == 2 && Login(loginData[0], loginData[1])) 
+            dbUser usr = Login(loginData[0], loginData[1]);
+            if (loginData.Length == 2 && mod == usr.MOD) 
                 return true;
             return false;
         }
 
-        public bool Login(string username, string password)
+        public dbUser Login(string username, string password)
         {
+            int i = 0;
+            dbUser usr = new dbUser();
+
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
-                string sql = "SELECT Username, Password, Mod FROM DbUser" +
-                    " WHERE Username = @user ";
+                string sql = "SELECT Username, Mod FROM DbUser" +
+                    " WHERE Username = @user AND Password = @pass ";
                 SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.Add(new SqlParameter("user", username));
+                cmd.Parameters.Add(new SqlParameter("pass", password));
 
                 using (SqlDataReader reader = cmd.ExecuteReader(System.Data.CommandBehavior.SingleRow))
                 {
                     if (reader.Read())
                     {
-                        /*zdravilo.Name = reader.GetString(0);
-                        zdravilo.NameLat = reader.GetString(1);
-                        zdravilo.Descr = reader.GetString(2);
-                        zdravilo.Inst = reader.GetString(3);
-                        zdravilo.Id_manu = Convert.ToInt32(reader[4]);*/
+                        usr.Username = reader.GetString(1);
+                        usr.MOD = Convert.ToInt32(reader[1]);
+                        i++;
                     }
                 }
             }
-                if (username.Equals("admin") && password.Equals("test"))
-                return true;
-            return false;
+            if(i==1)
+                return usr;
+            //neki je narobe nesme meti pravic.
+            usr.MOD = -1;
+            return usr;
         }
 
 
         public Zdravilo VrniZdravila(string ime)
         {
             Zdravilo zdravilo = new Zdravilo();
-
-
 
             using (SqlConnection con = new SqlConnection(cs))
             {
@@ -129,7 +133,7 @@ namespace RESTService
         public void DodajZdravilo(Zdravilo zdr)
         {
 
-            if (!AuthenticateUser())
+            if (!AuthenticateUser(0))
                 throw new FaultException("Napačno uporabniško ime ali geslo.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -154,16 +158,16 @@ namespace RESTService
         public void IzbrisiZdravilo(string Name, string NameLat)
         {
 
-            if (!AuthenticateUser())
+            if (!AuthenticateUser(0))
                 throw new FaultException("Napačno uporabniško ime ali geslo.");
 
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
-                //popravi
-                string sql = "DELETE FROM Medicine WHERE MedicineName = @param";
+                string sql = "DELETE FROM Medicine WHERE MedicineName = @param AND MedicineNameLat = @paramLat";
                 SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.Add(new SqlParameter("param1", Name));
+                cmd.Parameters.Add(new SqlParameter("param", Name));
+                cmd.Parameters.Add(new SqlParameter("paramLat", NameLat));
                 cmd.ExecuteNonQuery();
                 con.Close();
             }
@@ -171,7 +175,7 @@ namespace RESTService
 
         public void PosodobiZdravilo(Zdravilo zdravilo, string id)
         {
-            if (!AuthenticateUser())
+            if (!AuthenticateUser(0))
                 throw new FaultException("Napačno uporabniško ime ali geslo.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -194,9 +198,9 @@ namespace RESTService
 
         
 
-        // dodaj izbris posodobitev manufac/address
+        // dodaj izbris posodobitev manufac/address mod 1
 
-        // add remove user
+        // add remove user  mod 2
 
     }
 }

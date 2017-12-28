@@ -57,9 +57,9 @@ namespace RESTService
         [DataMember]
         public string NameTel { get; set; }
         [DataMember]
-        public string Id_Manu { get; }
+        public int Id_Manu { get; }
         [DataMember]
-        public string Id_addr { get; set; }
+        public int Id_addr { get; set; }
 
     }
 
@@ -68,7 +68,7 @@ namespace RESTService
         [DataMember]
         public string Country { get; set; }
         [DataMember]
-        public string PostNum { get; set; }
+        public int PostNum { get; set; }
         [DataMember]
         public string City { get; set; }
         [DataMember]
@@ -76,7 +76,7 @@ namespace RESTService
         [DataMember]
         public string HouseNum { get; set; }
         [DataMember]
-        public string Id_Addres { get; }
+        public int Id_Addres { get; }
     }
 
     public class Pharmacy
@@ -86,22 +86,24 @@ namespace RESTService
         [DataMember]
         public string Tel { get; set; }
         [DataMember]
-        public string Id_Pha { get; }
+        public int Id_Pha { get; }
         [DataMember]
-        public string Id_Addr{ get; set; }
+        public int Id_Addr{ get; set; }
 
     }
 
-
-
-    [DataContract]
-    public class Message
+    public class dbUser
     {
         [DataMember]
         public string Username { get; set; }
         [DataMember]
-        public string Time { get; set; }
+        public string pass { get;  }
         [DataMember]
-        public string Text { get; set; }
+        public int MOD { get; set; }
+        [DataMember]
+        public string Id_Addr { get; set; }
+
     }
+
+
 }
