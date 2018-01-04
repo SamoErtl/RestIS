@@ -67,8 +67,7 @@
       <DependentUpon>Database1.mdf</DependentUpon>
     </Content>
     <Content Include="ena.aspx" />
-    <Content Include="IZdravlia.svc" />
-    <Content Include="Osebe.svc" />
+    <Content Include="IZdravila.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -82,11 +81,8 @@
       <DependentUpon>ena.aspx</DependentUpon>
     </Compile>
     <Compile Include="IZdravila.cs" />
-    <Compile Include="IZdravlia.svc.cs">
-      <DependentUpon>IZdravlia.svc</DependentUpon>
-    </Compile>
-    <Compile Include="Osebe.svc.cs">
-      <DependentUpon>Osebe.svc</DependentUpon>
+    <Compile Include="IZdravila.svc.cs">
+      <DependentUpon>IZdravila.svc</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -94,6 +90,8 @@
   <ItemGroup>
     <None Include="Properties\PublishProfiles\vaja18app1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\vaja18app1 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\Zdravilnica - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\Zdravilnica - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
