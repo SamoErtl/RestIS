@@ -22,4 +22,3 @@ D:\5.semester\IS\New folder\RestIS\RESTService\bin\RESTService.pdb
 D:\5.semester\IS\New folder\RestIS\RESTService\obj\Release\RESTService.csproj.CoreCompileInputs.cache
 D:\5.semester\IS\New folder\RestIS\RESTService\obj\Release\RESTService.dll
 D:\5.semester\IS\New folder\RestIS\RESTService\obj\Release\RESTService.pdb
-D:\5.semester\IS\New folder\RestIS\RESTService\obj\Release\RESTService.csprojResolveAssemblyReference.cache

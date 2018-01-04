@@ -15,11 +15,11 @@ namespace RESTService
         // izpis zdravil
         [OperationContract]
         [WebGet(UriTemplate = "Zdravila", ResponseFormat = WebMessageFormat.Json)]
-        List<Zdravilo> VrniSeznamZdravil();
+        List<ZdraviloZImeni> VrniSeznamZdravil();
 
         [OperationContract]
         [WebGet(UriTemplate = "Zdravila/{id}", ResponseFormat = WebMessageFormat.Json)]
-        Zdravilo VrniZdravila(string id);
+        List<ZdraviloZImeni> VrniZdravila(string id);
 
         // Zdravilo
 
@@ -88,6 +88,20 @@ namespace RESTService
     public int Id_med { get; set; }
     [DataMember]
     public int Id_manu { get; set; }
+
+    }
+    [DataContract]
+    public class ZdraviloZImeni   {
+        [DataMember]
+        public string Name { get; set; }
+        [DataMember]
+        public string NameLat { get; set; }
+        [DataMember]
+        public string Descr { get; set; }
+        [DataMember]
+        public string Inst { get; set; }
+        [DataMember]
+        public string Id_manu { get; set; }
 
     }
 

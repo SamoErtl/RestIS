@@ -41,7 +41,7 @@ namespace RESTService
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
-                string sql = "SELECT Username, Mod FROM DbUser" +
+                string sql = "SELECT Username, Mod FROM DbUser " +
                     " WHERE Username = @user AND Password = @pass ";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("user", username));
@@ -65,35 +65,40 @@ namespace RESTService
         }
 
 
-        public Zdravilo VrniZdravila(string ime)
+        public List<ZdraviloZImeni> VrniZdravila(string ime)
         {
-            Zdravilo zdravilo = new Zdravilo();
+            var zdravilo = new List<ZdraviloZImeni>();// zdravilo = new ZdraviloZImeni();
 
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
-                string sql = "SELECT  *" +
-                    "FROM Medicine" +
-                    "WHERE MedicineName LIKE @param" +
-                    "ORDER BY MedicineName";
-                /*string sql = "SELECT m.MedicineName, m.MedicineName, m.MedicineDescription, m.MedicineInstruction," +
+                /*
+                string sql = "SELECT  * " +
+                    "FROM Medicine " +
+                    "WHERE MedicineName LIKE @param " +
+                    "ORDER BY MedicineName ";*/
+                string sql = "SELECT m.MedicineName, m.MedicineName, m.MedicineDescription, m.MedicineInstruction," +
                     " fac.ManufacturerName " +
-                    "FROM Medicine as m LEFT JOIN Manufacturer as fac ON m.ID_Manufacturer = fac.ID_Manufacturer" +
-                    "WHERE m.MedicineName LIKE @param" +
-                    "ORDER BY m.MedicineName";*/
+                    " FROM Medicine as m LEFT JOIN Manufacturer as fac ON m.ID_Manufacturer = fac.ID_Manufacturer " +
+                    " WHERE m.MedicineName LIKE @param " +
+                    " ORDER BY m.MedicineName ";
+
                 SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.Add(new SqlParameter("param", ime));
+                cmd.Parameters.Add(new SqlParameter("param", "%"+ime+"%"));
 
                 using (SqlDataReader reader = cmd.ExecuteReader(System.Data.CommandBehavior.SingleRow))
                 {
                     if (reader.Read())
                     {
-                        zdravilo.Name = reader.GetString(0);
-                        zdravilo.NameLat = reader.GetString(1);
-                        zdravilo.Descr = reader.GetString(2);
-                        zdravilo.Inst = reader.GetString(3);
-                        zdravilo.Id_med = Convert.ToInt32(reader[4]);
-                        zdravilo.Id_manu = Convert.ToInt32(reader[5]);
+                        zdravilo.Add(new ZdraviloZImeni
+                        {
+                            Name = reader.GetString(0),
+                            NameLat = reader.GetString(1),
+                            Descr = reader.GetString(2),
+                            Inst = reader.GetString(3),
+                            //Id_med = Convert.ToInt32(reader[4]),
+                            Id_manu = reader.GetString(4)
+                        });
                     }
                 }
                 con.Close();
@@ -102,20 +107,20 @@ namespace RESTService
             
         }
 
-        public List<Zdravilo> VrniSeznamZdravil()
+        public List<ZdraviloZImeni> VrniSeznamZdravil()
         {
-            var retVal = new List<Zdravilo>();
+            var retVal = new List<ZdraviloZImeni>();
             
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
-                /*string sql = "SELECT m.MedicineName, m.MedicineName, m.MedicineDescription, m.MedicineInstruction," +
+                string sql = "SELECT m.MedicineName, m.MedicineName, m.MedicineDescription, m.MedicineInstruction," +
                     " fac.ManufacturerName " +
-                    "FROM Medicine as m LEFT JOIN Manufacturer as fac ON m.ID_Manufacturer = fac.ID_Manufacturer" +
-                    "ORDER BY m.MedicineName";*/
-                string sql = "SELECT  *" +
-                    "FROM Medicine" +
-                    "ORDER BY MedicineName";
+                    "FROM Medicine as m LEFT JOIN Manufacturer as fac ON m.ID_Manufacturer = fac.ID_Manufacturer " +
+                    "ORDER BY m.MedicineName";
+                /*string sql = "SELECT  * " +
+                    " FROM Medicine " +
+                    " ORDER BY MedicineName";*/
                 SqlCommand cmd = new SqlCommand(sql, con);
 
 
@@ -123,13 +128,13 @@ namespace RESTService
                 {
                     while (reader.Read())
                     {
-                        retVal.Add(new Zdravilo
-                        { Name = reader.GetString(0),
+                        retVal.Add(new ZdraviloZImeni
+                        {   Name = reader.GetString(0),
                             NameLat = reader.GetString(1),
                             Descr = reader.GetString(2),
                             Inst = reader.GetString(3),
-                            Id_med = Convert.ToInt32(reader[4]),
-                            Id_manu = Convert.ToInt32(reader[5])
+                            //Id_med = Convert.ToInt32(reader[4]),
+                            Id_manu = reader.GetString(4)
                         });
                       
                     }
@@ -140,7 +145,7 @@ namespace RESTService
             }
 
 
-            return retVal;
+            //return retVal;
         }
 
 
@@ -155,8 +160,8 @@ namespace RESTService
             {
                 con.Open();
                 string sql =
-                    "INSERT INTO Medicine (MedicineName, MedicineNameLat, MedicineDescription, MedicineInstruction, ID_Medicine, ID_Manufacturer)" +
-                    "VALUES (@Name, @NameLat, @Descr, @Inst, @IdManu)";
+                    "INSERT INTO Medicine (MedicineName, MedicineNameLat, MedicineDescription, MedicineInstruction, ID_Medicine, ID_Manufacturer) " +
+                    " VALUES (@Name, @NameLat, @Descr, @Inst, @IdManu) ";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("Name", zdr.Name));
                 cmd.Parameters.Add(new SqlParameter("NameLat", zdr.NameLat));
@@ -223,8 +228,8 @@ namespace RESTService
             {
                 con.Open();
                 string sql =
-                    "INSERT INTO Manufacturer (ManufacturerName, ManufacturerTel, ID_address)" +
-                    "VALUES (@Name, @Tel, @Addr)";
+                    "INSERT INTO Manufacturer (ManufacturerName, ManufacturerTel, ID_address) " +
+                    " VALUES (@Name, @Tel, @Addr)";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("Name", zdr.Name));
                 cmd.Parameters.Add(new SqlParameter("Tel", zdr.NameTel));
@@ -280,7 +285,7 @@ namespace RESTService
         public void DodajAddress(Address zdr)
         {
 
-            if (AuthenticateUser(1) == 1)
+            if (AuthenticateUser(0) == 0)
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -288,7 +293,7 @@ namespace RESTService
                 con.Open();
                 string sql =
                     "INSERT INTO Address (Country, PostNumber,City, Street, HouseNumber)" +
-                    "VALUES (@1, @2, @3, @4, @5)";
+                    " VALUES (@1, @2, @3, @4, @5)";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("1", zdr.Country));
                 cmd.Parameters.Add(new SqlParameter("2", zdr.PostNum));
@@ -305,7 +310,7 @@ namespace RESTService
         public void IzbrisiAddress(Address addrs)
         {
 
-            if (AuthenticateUser(1) == 1)
+            if (AuthenticateUser(0) == 0)
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -321,7 +326,7 @@ namespace RESTService
 
         public void PosodobiAddress(Address addrs, string id)
         {
-            if (AuthenticateUser(1) == 1)
+            if (AuthenticateUser(0) == 0)
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -348,15 +353,15 @@ namespace RESTService
         public void DodajUser(dbUser zdr)
         {
 
-            if (AuthenticateUser(2) == 2)
-                throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
+            //if (AuthenticateUser(2) == 2)
+            //    throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
                 string sql =
                     "INSERT INTO DBUser (Username, Password, Email, Mod)" +
-                    "VALUES (@Name, @Pass, @Mail, @Mod)";
+                    " VALUES (@Name, @Pass, @Mail, @Mod)";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("Name", zdr.Username));
                 cmd.Parameters.Add(new SqlParameter("Pass", zdr.Pass));
@@ -372,7 +377,7 @@ namespace RESTService
         public void IzbrisiUser(string Name)
         {
 
-            if (AuthenticateUser(2) == 2)
+            if (AuthenticateUser(1) == 1)
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
