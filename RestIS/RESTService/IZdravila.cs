@@ -85,7 +85,7 @@ namespace RESTService
     [DataMember]
     public string Inst { get; set; }
     [DataMember]
-    public int Id_med { get; set; }
+    public int Id_med { get; }
     [DataMember]
     public int Id_manu { get; set; }
 

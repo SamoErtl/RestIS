@@ -19,7 +19,7 @@ namespace RESTService
        
         string cs = ConfigurationManager.ConnectionStrings["DBZdravilnicaConnectionString"].ConnectionString;
 
-        private int AuthenticateUser(int mod)
+        private int AuthenticateUser(int mod)// lahko bi bla boolean
         {
             WebOperationContext ctx = WebOperationContext.Current;
             string authHeader = ctx.IncomingRequest.Headers[HttpRequestHeader.Authorization];
@@ -33,7 +33,7 @@ namespace RESTService
             return -1;
         }
 
-        public dbUser Login(string username, string password)
+        public dbUser Login(string username, string password)//lahko bi bla int
         {
             int i = 0;
             dbUser usr = new dbUser();
@@ -57,7 +57,7 @@ namespace RESTService
                     }
                 }
             }
-            if(i==1)
+            if(i==1)    
                 return usr;
             //neki je narobe nesme meti pravic.
             usr.MOD = -1;
@@ -160,14 +160,14 @@ namespace RESTService
             {
                 con.Open();
                 string sql =
-                    "INSERT INTO Medicine (MedicineName, MedicineNameLat, MedicineDescription, MedicineInstruction, ID_Medicine, ID_Manufacturer) " +
-                    " VALUES (@Name, @NameLat, @Descr, @Inst, @IdManu) ";
+                    "INSERT INTO Medicine (MedicineName, MedicineNameLat, MedicineDescription, MedicineInstruction, ID_Manufacturer) " +
+                    " VALUES (@0, @1, @2, @3, @4) ";
                 SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.Add(new SqlParameter("Name", zdr.Name));
-                cmd.Parameters.Add(new SqlParameter("NameLat", zdr.NameLat));
-                cmd.Parameters.Add(new SqlParameter("Descr", zdr.Descr));
-                cmd.Parameters.Add(new SqlParameter("Inst", zdr.Inst));
-                cmd.Parameters.Add(new SqlParameter("IdManu", zdr.Id_manu));
+                cmd.Parameters.Add(new SqlParameter("0", zdr.Name));
+                cmd.Parameters.Add(new SqlParameter("1", zdr.NameLat));
+                cmd.Parameters.Add(new SqlParameter("2", zdr.Descr));
+                cmd.Parameters.Add(new SqlParameter("3", zdr.Inst));
+                cmd.Parameters.Add(new SqlParameter("4", zdr.Id_manu));
                 cmd.ExecuteNonQuery();
                 con.Close();
 
