@@ -16,3 +16,10 @@ C:\Users\lrkadmin\Desktop\Vaja19\RESTService\bin\RESTService.pdb
 C:\Users\lrkadmin\Desktop\Vaja19\RESTService\obj\Release\RESTService.csprojResolveAssemblyReference.cache
 C:\Users\lrkadmin\Desktop\Vaja19\RESTService\obj\Release\RESTService.dll
 C:\Users\lrkadmin\Desktop\Vaja19\RESTService\obj\Release\RESTService.pdb
+D:\5.semester\IS\New folder\RestIS\RESTService\bin\RESTService.dll.config
+D:\5.semester\IS\New folder\RestIS\RESTService\bin\RESTService.dll
+D:\5.semester\IS\New folder\RestIS\RESTService\bin\RESTService.pdb
+D:\5.semester\IS\New folder\RestIS\RESTService\obj\Release\RESTService.csprojResolveAssemblyReference.cache
+D:\5.semester\IS\New folder\RestIS\RESTService\obj\Release\RESTService.csproj.CoreCompileInputs.cache
+D:\5.semester\IS\New folder\RestIS\RESTService\obj\Release\RESTService.dll
+D:\5.semester\IS\New folder\RestIS\RESTService\obj\Release\RESTService.pdb

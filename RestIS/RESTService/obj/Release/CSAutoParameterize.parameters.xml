@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <parameters>
-  <parameter name="dbosebeCS-Web.config Connection String" description="dbosebeCS Connection String used in web.config by the application to access the database." defaultValue="Data Source=osebe-api.database.windows.net;Initial Catalog=dbosebe;Persist Security Info=True;User ID=admindb;Password='Abaaba!&quot;#'" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\Users\\lrkadmin\\Desktop\\Vaja19\\RESTService\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='dbosebeCS']/@connectionString" />
-  </parameter>
-  <parameter name="ConnectionStringDBFile-Web.config Connection String" description="ConnectionStringDBFile Connection String used in web.config by the application to access the database." defaultValue="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database1.mdf;Integrated Security=True" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\Users\\lrkadmin\\Desktop\\Vaja19\\RESTService\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='ConnectionStringDBFile']/@connectionString" />
+  <parameter name="DBZdravilnicaConnectionString-Web.config Connection String" description="DBZdravilnicaConnectionString Connection String used in web.config by the application to access the database." defaultValue="Data Source=sdbzdravilniva.database.windows.net;Initial Catalog=DBZdravilnica;Persist Security Info=True;User ID=Zdravilec;Password=1Zdravila2" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="D:\\5\.semester\\IS\\New\ folder\\RestIS\\RESTService\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='DBZdravilnicaConnectionString']/@connectionString" />
   </parameter>
 </parameters>

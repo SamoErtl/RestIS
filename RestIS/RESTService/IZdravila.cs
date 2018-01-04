@@ -25,7 +25,7 @@ namespace RESTService
 
         [OperationContract]
         [WebInvoke(UriTemplate = "Zdravilo", ResponseFormat = WebMessageFormat.Json)]
-        void DodajZdravilo(Zdravilo oseba);
+        void DodajZdravilo(Zdravilo zdravilo);
 
         [OperationContract]
         [WebInvoke(UriTemplate = "Zdravilo/{Name}", ResponseFormat = WebMessageFormat.Json, Method = "DELETE")]
@@ -47,6 +47,19 @@ namespace RESTService
         [OperationContract]
         [WebInvoke(UriTemplate = "Manufacturer/{id}", ResponseFormat = WebMessageFormat.Json, Method = "PUT")]
         void PosodobiManu(Manufacturer manu, string id);
+
+        // Address
+        [OperationContract]
+        [WebInvoke(UriTemplate = "Manufacturer", ResponseFormat = WebMessageFormat.Json)]
+        void DodajAddress(Address manu);
+
+        [OperationContract]
+        [WebInvoke(UriTemplate = "Manufacturer/{Name}", ResponseFormat = WebMessageFormat.Json, Method = "DELETE")]
+        void IzbrisiAddress(Address Name);
+
+        [OperationContract]
+        [WebInvoke(UriTemplate = "Manufacturer/{id}", ResponseFormat = WebMessageFormat.Json, Method = "PUT")]
+        void PosodobiAddress(Address manu, string id);
 
 
         // User
@@ -78,6 +91,7 @@ namespace RESTService
 
     }
 
+    [DataContract]
     public class Manufacturer
     {
         [DataMember]
@@ -91,7 +105,8 @@ namespace RESTService
 
     }
 
-    public class Address
+    [DataContract]
+    public class Address 
     {
         [DataMember]
         public string Country { get; set; }
@@ -107,6 +122,7 @@ namespace RESTService
         public int Id_Addres { get; }
     }
 
+    [DataContract]
     public class Pharmacy
     {
         [DataMember]
@@ -120,6 +136,7 @@ namespace RESTService
 
     }
 
+    [DataContract]
     public class dbUser
     {
         [DataMember]
