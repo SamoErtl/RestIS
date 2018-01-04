@@ -50,15 +50,15 @@ namespace RESTService
 
         // Address
         [OperationContract]
-        [WebInvoke(UriTemplate = "Manufacturer", ResponseFormat = WebMessageFormat.Json)]
+        [WebInvoke(UriTemplate = "Address", ResponseFormat = WebMessageFormat.Json)]
         void DodajAddress(Address manu);
 
         [OperationContract]
-        [WebInvoke(UriTemplate = "Manufacturer/{Name}", ResponseFormat = WebMessageFormat.Json, Method = "DELETE")]
+        [WebInvoke(UriTemplate = "Address", ResponseFormat = WebMessageFormat.Json, Method = "DELETE")]
         void IzbrisiAddress(Address Name);
 
         [OperationContract]
-        [WebInvoke(UriTemplate = "Manufacturer/{id}", ResponseFormat = WebMessageFormat.Json, Method = "PUT")]
+        [WebInvoke(UriTemplate = "Address/{id}", ResponseFormat = WebMessageFormat.Json, Method = "PUT")]
         void PosodobiAddress(Address manu, string id);
 
 
@@ -85,7 +85,7 @@ namespace RESTService
     [DataMember]
     public string Inst { get; set; }
     [DataMember]
-    public int Id_med { get; }
+    public int Id_med { get; set; }
     [DataMember]
     public int Id_manu { get; set; }
 

@@ -72,11 +72,15 @@ namespace RESTService
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
-                string sql = "SELECT m.MedicineName, m.MedicineName, m.MedicineDescription, m.MedicineInstruction," +
+                string sql = "SELECT  *" +
+                    "FROM Medicine" +
+                    "WHERE MedicineName LIKE @param" +
+                    "ORDER BY MedicineName";
+                /*string sql = "SELECT m.MedicineName, m.MedicineName, m.MedicineDescription, m.MedicineInstruction," +
                     " fac.ManufacturerName " +
                     "FROM Medicine as m LEFT JOIN Manufacturer as fac ON m.ID_Manufacturer = fac.ID_Manufacturer" +
                     "WHERE m.MedicineName LIKE @param" +
-                    "ORDER BY m.MedicineName";
+                    "ORDER BY m.MedicineName";*/
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("param", ime));
 
@@ -88,7 +92,8 @@ namespace RESTService
                         zdravilo.NameLat = reader.GetString(1);
                         zdravilo.Descr = reader.GetString(2);
                         zdravilo.Inst = reader.GetString(3);
-                        zdravilo.Id_manu = Convert.ToInt32( reader[4]);
+                        zdravilo.Id_med = Convert.ToInt32(reader[4]);
+                        zdravilo.Id_manu = Convert.ToInt32(reader[5]);
                     }
                 }
                 con.Close();
@@ -100,14 +105,17 @@ namespace RESTService
         public List<Zdravilo> VrniSeznamZdravil()
         {
             var retVal = new List<Zdravilo>();
-
+            
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
-                string sql = "SELECT m.MedicineName, m.MedicineName, m.MedicineDescription, m.MedicineInstruction," +
+                /*string sql = "SELECT m.MedicineName, m.MedicineName, m.MedicineDescription, m.MedicineInstruction," +
                     " fac.ManufacturerName " +
                     "FROM Medicine as m LEFT JOIN Manufacturer as fac ON m.ID_Manufacturer = fac.ID_Manufacturer" +
-                    "ORDER BY m.MedicineName";
+                    "ORDER BY m.MedicineName";*/
+                string sql = "SELECT  *" +
+                    "FROM Medicine" +
+                    "ORDER BY MedicineName";
                 SqlCommand cmd = new SqlCommand(sql, con);
 
 
@@ -120,7 +128,8 @@ namespace RESTService
                             NameLat = reader.GetString(1),
                             Descr = reader.GetString(2),
                             Inst = reader.GetString(3),
-                            Id_manu = Convert.ToInt32(reader[4])
+                            Id_med = Convert.ToInt32(reader[4]),
+                            Id_manu = Convert.ToInt32(reader[5])
                         });
                       
                     }
@@ -129,7 +138,9 @@ namespace RESTService
                 return retVal;
 
             }
-            
+
+
+            return retVal;
         }
 
 
