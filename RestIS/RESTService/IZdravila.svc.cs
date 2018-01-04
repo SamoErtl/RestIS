@@ -28,7 +28,7 @@ namespace RESTService
 
             string[] loginData = authHeader.Split(':');
             dbUser usr = Login(loginData[0], loginData[1]);
-            if (loginData.Length == 2 && mod == usr.MOD) 
+            if (loginData.Length == 2 && mod <= usr.MOD) 
                 return usr.MOD;
             return -1;
         }
@@ -153,7 +153,7 @@ namespace RESTService
         public void DodajZdravilo(Zdravilo zdr)
         {
 
-            if (AuthenticateUser(0)==0)
+            if (AuthenticateUser(0)>=0)
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -178,7 +178,7 @@ namespace RESTService
         public void IzbrisiZdravilo(string Name)
         {
 
-            if (AuthenticateUser(0)==0)
+            if (AuthenticateUser(0)>=0)
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -194,7 +194,7 @@ namespace RESTService
 
         public void PosodobiZdravilo(Zdravilo zdravilo, string id)
         {
-            if (AuthenticateUser(0)==0)
+            if (AuthenticateUser(0)>=0)
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
