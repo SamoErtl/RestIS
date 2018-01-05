@@ -18,8 +18,8 @@ namespace RESTService
         List<ZdraviloZImeni> VrniSeznamZdravil();
 
         [OperationContract]
-        [WebGet(UriTemplate = "Zdravila/{id}", ResponseFormat = WebMessageFormat.Json)]
-        List<ZdraviloZImeni> VrniZdravila(string id);
+        [WebGet(UriTemplate = "Zdravila/{DelImena}", ResponseFormat = WebMessageFormat.Json)]
+        List<ZdraviloZImeni> VrniZdravila(string DelImena);
 
         // Zdravilo
 
@@ -32,8 +32,8 @@ namespace RESTService
         void IzbrisiZdravilo(string Name);
 
         [OperationContract]
-        [WebInvoke(UriTemplate = "Zdravilo/{id}", ResponseFormat = WebMessageFormat.Json, Method ="PUT")]
-        void PosodobiZdravilo(Zdravilo zdravilo, string id);
+        [WebInvoke(UriTemplate = "Zdravilo/{Name}", ResponseFormat = WebMessageFormat.Json, Method ="PUT")]
+        void PosodobiZdravilo(Zdravilo zdravilo, string Name);
 
         // Manufactured
         [OperationContract]
@@ -45,8 +45,8 @@ namespace RESTService
         void IzbrisiManu(string Name);
 
         [OperationContract]
-        [WebInvoke(UriTemplate = "Manufacturer/{id}", ResponseFormat = WebMessageFormat.Json, Method = "PUT")]
-        void PosodobiManu(Manufacturer manu, string id);
+        [WebInvoke(UriTemplate = "Manufacturer/{Name}", ResponseFormat = WebMessageFormat.Json, Method = "PUT")]
+        void PosodobiManu(Manufacturer manu, string Name);
 
         // Address
         [OperationContract]
@@ -84,8 +84,6 @@ namespace RESTService
     public string Descr { get; set; }
     [DataMember]
     public string Inst { get; set; }
-    [DataMember]
-    public int Id_med { get; }
     [DataMember]
     public int Id_manu { get; set; }
 

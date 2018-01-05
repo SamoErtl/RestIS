@@ -19,24 +19,25 @@ namespace RESTService
        
         string cs = ConfigurationManager.ConnectionStrings["DBZdravilnicaConnectionString"].ConnectionString;
 
-        private int AuthenticateUser(int mod)// lahko bi bla boolean
+        private Boolean AuthenticateUser(int mod)// lahko bi bla boolean
         {
             WebOperationContext ctx = WebOperationContext.Current;
             string authHeader = ctx.IncomingRequest.Headers[HttpRequestHeader.Authorization];
             if (authHeader == null)
-                return -2;
+                return false;
 
             string[] loginData = authHeader.Split(':');
-            dbUser usr = Login(loginData[0], loginData[1]);
-            if (loginData.Length == 2 && mod <= usr.MOD) 
-                return usr.MOD;
-            return -1;
+            dbUser usr = Login(loginData[0], loginData[1], mod);
+            if (loginData.Length == 2) 
+                return true;
+            return false;
         }
 
-        public dbUser Login(string username, string password)//lahko bi bla int
+        public dbUser Login(string username, string password, int mod)//lahko bi bla int
         {
             int i = 0;
             dbUser usr = new dbUser();
+            usr.MOD = -1;
 
             using (SqlConnection con = new SqlConnection(cs))
             {
@@ -51,13 +52,15 @@ namespace RESTService
                 {
                     if (reader.Read())
                     {
-                        usr.Username = reader.GetString(1);
+                        
+                        //usr.Username = reader.GetString(1);
                         usr.MOD = Convert.ToInt32(reader[1]);
-                        i++;
+                        i = i + 1;
+
                     }
                 }
             }
-            if(i==1)    
+            if(i== 1 && mod <= usr.MOD)    
                 return usr;
             //neki je narobe nesme meti pravic.
             usr.MOD = -1;
@@ -153,7 +156,7 @@ namespace RESTService
         public void DodajZdravilo(Zdravilo zdr)
         {
 
-            if (AuthenticateUser(0)>=0)
+            if (!AuthenticateUser(0))
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -178,7 +181,7 @@ namespace RESTService
         public void IzbrisiZdravilo(string Name)
         {
 
-            if (AuthenticateUser(0)>=0)
+            if (!AuthenticateUser(0))
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -194,20 +197,22 @@ namespace RESTService
 
         public void PosodobiZdravilo(Zdravilo zdravilo, string id)
         {
-            if (AuthenticateUser(0)>=0)
+            if (!AuthenticateUser(0))
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
             {
                 con.Open();
                 string sql =
-                    "UPDATE Medicine set MedicineName=@0 MedicineNameLat@1, MedicineDescription@2, MedicineInstruction=@3 ID_Manufacturer =@4 WHERE MedicineName=@0";
+                    "UPDATE Medicine set MedicineName=@0, MedicineNameLat=@1, MedicineDescription=@2, MedicineInstruction=@3, ID_Manufacturer =@4 " +
+                    " WHERE MedicineName=@5 ";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("0", zdravilo.Name));
                 cmd.Parameters.Add(new SqlParameter("1", zdravilo.NameLat));
                 cmd.Parameters.Add(new SqlParameter("2", zdravilo.Descr));
                 cmd.Parameters.Add(new SqlParameter("3", zdravilo.Inst));
                 cmd.Parameters.Add(new SqlParameter("4", zdravilo.Id_manu));
+                cmd.Parameters.Add(new SqlParameter("5", id));
                 cmd.ExecuteNonQuery();
                 con.Close();
 
@@ -221,7 +226,7 @@ namespace RESTService
         public void DodajManu(Manufacturer zdr)
         {
 
-            if (AuthenticateUser(1) == 1)
+            if (!AuthenticateUser(1))
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -244,7 +249,7 @@ namespace RESTService
         public void IzbrisiManu(string Name)
         {
 
-            if (AuthenticateUser(1) == 1)
+            if (!AuthenticateUser(1))
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -260,7 +265,7 @@ namespace RESTService
 
         public void PosodobiManu(Manufacturer zdravilo, string id)
         {
-            if (AuthenticateUser(1) == 1)
+            if (!AuthenticateUser(1))
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -268,11 +273,12 @@ namespace RESTService
                 con.Open();
                 
                 string sql =
-                    "UPDATE Manufacturer set ManufacturerName=@0 ManufacturerTel@1, ID_Address@2 WHERE ManufacturerName=@0";
+                    "UPDATE Manufacturer set ManufacturerName=@0 ManufacturerTel@1, ID_Address@2 WHERE ManufacturerName=@3";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("0", zdravilo.Name));
                 cmd.Parameters.Add(new SqlParameter("1", zdravilo.NameTel));
                 cmd.Parameters.Add(new SqlParameter("2", zdravilo.Id_addr));
+                cmd.Parameters.Add(new SqlParameter("3", id));
 
                 cmd.ExecuteNonQuery();
                 con.Close();
@@ -285,7 +291,7 @@ namespace RESTService
         public void DodajAddress(Address zdr)
         {
 
-            if (AuthenticateUser(0) == 0)
+            if (!AuthenticateUser(1))
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -310,7 +316,7 @@ namespace RESTService
         public void IzbrisiAddress(Address addrs)
         {
 
-            if (AuthenticateUser(0) == 0)
+            if (!AuthenticateUser(1))
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -326,7 +332,7 @@ namespace RESTService
 
         public void PosodobiAddress(Address addrs, string id)
         {
-            if (AuthenticateUser(0) == 0)
+            if (!AuthenticateUser(1))
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
@@ -334,7 +340,7 @@ namespace RESTService
                 con.Open();
                 //popravi
                 string sql =
-                    "UPDATE Address set Country=@1 PostNumber@2, City =@3, Street = @4, HouseNumber= @5 WHERE ID_address=@0";
+                    "UPDATE Address set Country=@1 PostNumber@2, City =@3, Street = @4, HouseNumber= @5 WHERE ID_address=@6";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.Add(new SqlParameter("0", addrs.Id_Addres));
                 cmd.Parameters.Add(new SqlParameter("1", addrs.Country));
@@ -342,6 +348,7 @@ namespace RESTService
                 cmd.Parameters.Add(new SqlParameter("3", addrs.City));
                 cmd.Parameters.Add(new SqlParameter("4", addrs.Street));
                 cmd.Parameters.Add(new SqlParameter("5", addrs.HouseNum));
+                cmd.Parameters.Add(new SqlParameter("6", id));
 
                 cmd.ExecuteNonQuery();
                 con.Close();
@@ -366,7 +373,7 @@ namespace RESTService
                 cmd.Parameters.Add(new SqlParameter("Name", zdr.Username));
                 cmd.Parameters.Add(new SqlParameter("Pass", zdr.Pass));
                 cmd.Parameters.Add(new SqlParameter("Mail", zdr.Mail));
-                cmd.Parameters.Add(new SqlParameter("Mod", zdr.MOD));
+                cmd.Parameters.Add(new SqlParameter("Mod", 0));
                 cmd.ExecuteNonQuery();
                 con.Close();
 
@@ -377,7 +384,7 @@ namespace RESTService
         public void IzbrisiUser(string Name)
         {
 
-            if (AuthenticateUser(1) == 1)
+            if (!AuthenticateUser(1))
                 throw new FaultException("Napačno uporabniško ime, geslo ali premalo moči.");
 
             using (SqlConnection con = new SqlConnection(cs))
